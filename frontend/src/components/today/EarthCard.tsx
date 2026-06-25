@@ -11,7 +11,7 @@ export function EarthCard() {
   return (
     <Link
       to="/earth"
-      className="group relative block overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-input"
+      className="group relative block h-72 overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-input"
     >
       {latest ? (
         <>

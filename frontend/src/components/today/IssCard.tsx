@@ -4,6 +4,7 @@ import { useIssTle } from '@/api/queries'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatKm, formatKmh, formatLatLon } from '@/lib/format'
 import { useIssPosition } from '@/lib/iss'
+import { IssMiniMap } from './IssMiniMap'
 
 export function IssCard() {
   const { data: tle } = useIssTle()
@@ -12,7 +13,7 @@ export function IssCard() {
   return (
     <Link
       to="/iss"
-      className="block rounded-xl border border-border bg-surface p-4 transition-colors hover:border-input"
+      className="flex h-72 flex-col rounded-xl border border-border bg-surface p-4 transition-colors hover:border-input"
     >
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -23,7 +24,7 @@ export function IssCard() {
         </span>
       </div>
       {pos ? (
-        <div className="mt-3">
+        <div className="mt-2">
           <div className="font-mono text-lg font-semibold tabular-nums text-foreground">
             {formatLatLon(pos.lat, pos.lon)}
           </div>
@@ -32,8 +33,11 @@ export function IssCard() {
           </div>
         </div>
       ) : (
-        <Skeleton className="mt-3 h-12 w-full" />
+        <Skeleton className="mt-2 h-10 w-2/3" />
       )}
+      <div className="mt-3 min-h-0 flex-1 overflow-hidden rounded-lg border border-border/60">
+        {tle ? <IssMiniMap tle={tle} pos={pos} /> : <Skeleton className="h-full w-full" />}
+      </div>
     </Link>
   )
 }
