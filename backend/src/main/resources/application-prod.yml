@@ -1,0 +1,17 @@
+# Production: managed Postgres (Neon) + in-memory cache. Activated with SPRING_PROFILES_ACTIVE=prod.
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  cache:
+    type: simple
+
+# No localhost fallback in prod: a missing CORS_ORIGINS should fail loud, not bake in dev ports.
+orbit:
+  cors:
+    allowed-origins: ${CORS_ORIGINS}

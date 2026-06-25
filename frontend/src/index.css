@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/* "Observatory" identity: deep navy-black, stellar gold, earth-blue. The chrome stays quiet
+   so NASA imagery leads. Tokens are exposed as Tailwind colors (bg-surface, text-accent, ...). */
+@theme {
+  --color-background: #070b14;
+  --color-surface: #0d1322;
+  --color-surface-2: #141b2c;
+  --color-foreground: #eceef5;
+  --color-muted: #8b93a8;
+  --color-border: #1e2636;
+  --color-input: #2a3346;
+
+  --color-primary: #6aa8ff;          /* earth / live blue: links, ISS, primary actions */
+  --color-primary-foreground: #06101f;
+  --color-accent: #f4c56b;           /* stellar gold: brand, highlights, the Sun, EPIC */
+  --color-accent-foreground: #1a1304;
+  --color-hazard: #ff5a6a;           /* potentially hazardous asteroids */
+  --color-hazard-soft: rgba(255, 90, 106, 0.14);
+  --color-ring: #6aa8ff;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.012em;
+  }
+  /* Faint deep-space glow behind the starfield, for depth. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(1100px 560px at 72% -12%, rgba(106, 168, 255, 0.09), transparent 60%),
+      radial-gradient(820px 460px at 8% 112%, rgba(244, 197, 107, 0.05), transparent 55%);
+  }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+}
+
+@layer utilities {
+  * { scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+}
+
+/* Leaflet map + the live ISS marker (classes used in JS-injected markup). */
+.leaflet-container {
+  background: #0a0e18;
+  font-family: var(--font-sans);
+}
+.iss-marker {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+.iss-dot {
+  position: absolute;
+  inset: 7px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px 2px rgba(106, 168, 255, 0.85);
+}
+.iss-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-primary);
+  animation: iss-ping 2s ease-out infinite;
+}
+@keyframes iss-ping {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+

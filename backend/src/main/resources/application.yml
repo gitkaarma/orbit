@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: orbit-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+orbit:
+  cors:
+    # Vite dev ports (5173 default, 5191 when 5173 is taken). Prod sets CORS_ORIGINS to the web origin.
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:5174,http://localhost:5191}
+  http:
+    connect-timeout-ms: 4000
+    read-timeout-ms: 10000
+  nasa:
+    base-url: ${NASA_BASE_URL:https://api.nasa.gov}
+    api-key: ${NASA_API_KEY:DEMO_KEY}
+  iss:
+    base-url: ${ISS_TLE_BASE_URL:https://celestrak.org}
+  library:
+    base-url: ${LIBRARY_BASE_URL:https://images-api.nasa.gov}
+
+resilience4j:
+  retry:
+    instances:
+      upstream:
+        max-attempts: 3
+        wait-duration: 400ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - com.orbit.provider.UpstreamException

@@ -1,0 +1,29 @@
+# Render Blueprint: Spring Boot API (Docker). DB is Neon (external); cache is in-memory.
+# Render -> New -> Blueprint -> connect this repo; it prompts for every `sync: false` secret.
+services:
+  - type: web
+    name: orbit-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    # Liveness only: the aggregate /actuator/health goes 503 while Neon (free tier) is waking,
+    # which would fail the deploy on cold start. Liveness reports app health without touching the DB.
+    healthCheckPath: /actuator/health/liveness
+    autoDeploy: true
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: NASA_API_KEY
+        sync: false
+      # DATABASE_URL must be the JDBC form: jdbc:postgresql://<host>/<db>?sslmode=require
+      # (Neon's default string has no jdbc: prefix). Set user/password separately, below.
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
