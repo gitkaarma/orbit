@@ -42,6 +42,12 @@ orbit:
     fallback-base-url: ${ISS_TLE_FALLBACK_URL:https://api.wheretheiss.at}
   library:
     base-url: ${LIBRARY_BASE_URL:https://images-api.nasa.gov}
+  gemini:
+    # AI flight-director narration. With no GEMINI_API_KEY the endpoint serves a grounded,
+    # templated narration instead, so the feature works (and is demoable) without a key.
+    base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com}
+    api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-2.5-flash}
 
 resilience4j:
   retry:

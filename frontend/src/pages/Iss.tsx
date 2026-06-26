@@ -1,7 +1,10 @@
+import { useMemo } from 'react'
 import { Satellite } from 'lucide-react'
 import { apiErrorMessage } from '@/api/client'
 import { useIssTle } from '@/api/queries'
+import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 import { ErrorState } from '@/components/common/ErrorState'
+import { IssGlobe, webglSupported } from '@/components/iss/IssGlobe'
 import { IssMap } from '@/components/iss/IssMap'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatKm, formatKmh, formatLatLon } from '@/lib/format'
@@ -39,6 +42,7 @@ function IssStats({ pos }: { pos: IssState }) {
 export function Iss() {
   const { data: tle, isLoading, isError, error, refetch } = useIssTle()
   const pos = useIssPosition(tle)
+  const useGlobe = useMemo(() => webglSupported(), [])
 
   return (
     <div className="space-y-4">
@@ -47,8 +51,9 @@ export function Iss() {
           <Satellite className="size-6 text-primary" /> Tracking the ISS
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          The position is computed live from orbital elements, right in your browser. The blue
-          arc traces the ground path for the next 90 minutes; the shaded region is night.
+          The position is computed live from orbital elements, right in your browser. Drag to spin
+          the globe and scroll to zoom; the blue arc traces the orbit for the next 90 minutes. The
+          lit half is daytime, with city lights glowing across the night side.
         </p>
       </div>
 
@@ -63,11 +68,17 @@ export function Iss() {
       ) : tle ? (
         <div className="relative overflow-hidden rounded-xl border border-border">
           <div className="h-[62vh] min-h-[360px]">
-            <IssMap tle={tle} pos={pos} />
+            {useGlobe ? (
+              <ErrorBoundary fallback={<IssMap tle={tle} pos={pos} />}>
+                <IssGlobe tle={tle} pos={pos} />
+              </ErrorBoundary>
+            ) : (
+              <IssMap tle={tle} pos={pos} />
+            )}
           </div>
           {pos && <IssStats pos={pos} />}
           <div className="pointer-events-none absolute bottom-1 right-2 z-[500] text-[10px] text-muted">
-            © OpenStreetMap, CARTO
+            {useGlobe ? 'Blue Marble & Black Marble · NASA' : '© OpenStreetMap, CARTO'}
           </div>
         </div>
       ) : null}

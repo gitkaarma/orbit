@@ -62,3 +62,14 @@ export function nightPolygon(date: Date): [number, number][] {
   points.push([darkPole, -180])
   return points
 }
+
+/** The point on Earth where the Sun is directly overhead (sub-solar point), in degrees. */
+export function subsolarPoint(date: Date): { lat: number; lon: number } {
+  const jd = julian(date)
+  const sun = sunPosition(jd)
+  // Longitude where the Sun is at the zenith: right ascension minus Greenwich sidereal
+  // time (so that sunElevation there is +90°), normalised to [-180, 180].
+  let lon = sun.ra - gmstDeg(jd)
+  lon = ((((lon + 180) % 360) + 360) % 360) - 180
+  return { lat: sun.decl, lon }
+}

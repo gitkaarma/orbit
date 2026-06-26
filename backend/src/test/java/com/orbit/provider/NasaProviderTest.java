@@ -31,7 +31,7 @@ class NasaProviderTest {
         wm = new WireMockServer(options().dynamicPort());
         wm.start();
         OrbitProperties props = new OrbitProperties(
-                null, null, new OrbitProperties.Nasa(wm.baseUrl(), "TEST_KEY"), null, null);
+                null, null, new OrbitProperties.Nasa(wm.baseUrl(), "TEST_KEY"), null, null, null);
         provider = new NasaProvider(RestClient.builder().baseUrl(wm.baseUrl()).build(), props);
     }
 

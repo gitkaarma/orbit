@@ -39,4 +39,15 @@ public class RestClientConfig {
     RestClient libraryClient(OrbitProperties props, ClientHttpRequestFactory factory) {
         return RestClient.builder().baseUrl(props.library().baseUrl()).requestFactory(factory).build();
     }
+
+    @Bean
+    RestClient geminiClient(OrbitProperties props) {
+        // The LLM token stream stays open well beyond the 10s upstream read timeout, so this
+        // client gets its own factory with a longer read timeout.
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.defaults()
+                .withConnectTimeout(Duration.ofMillis(props.http().connectTimeoutMs()))
+                .withReadTimeout(Duration.ofSeconds(60));
+        ClientHttpRequestFactory factory = ClientHttpRequestFactoryBuilder.detect().build(settings);
+        return RestClient.builder().baseUrl(props.gemini().baseUrl()).requestFactory(factory).build();
+    }
 }
