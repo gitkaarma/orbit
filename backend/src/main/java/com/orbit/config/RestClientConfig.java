@@ -31,6 +31,11 @@ public class RestClientConfig {
     }
 
     @Bean
+    RestClient issFallbackClient(OrbitProperties props, ClientHttpRequestFactory factory) {
+        return RestClient.builder().baseUrl(props.iss().fallbackBaseUrl()).requestFactory(factory).build();
+    }
+
+    @Bean
     RestClient libraryClient(OrbitProperties props, ClientHttpRequestFactory factory) {
         return RestClient.builder().baseUrl(props.library().baseUrl()).requestFactory(factory).build();
     }

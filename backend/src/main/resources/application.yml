@@ -36,7 +36,10 @@ orbit:
     base-url: ${NASA_BASE_URL:https://api.nasa.gov}
     api-key: ${NASA_API_KEY:DEMO_KEY}
   iss:
-    base-url: ${ISS_TLE_BASE_URL:https://celestrak.org}
+    # Primary is fast + cloud-friendly; wheretheiss is the slower fallback. Celestrak is NOT used:
+    # it silently drops connections from datacenter IPs, so it never resolves from Render.
+    base-url: ${ISS_TLE_BASE_URL:https://tle.ivanstanojevic.me}
+    fallback-base-url: ${ISS_TLE_FALLBACK_URL:https://api.wheretheiss.at}
   library:
     base-url: ${LIBRARY_BASE_URL:https://images-api.nasa.gov}
 

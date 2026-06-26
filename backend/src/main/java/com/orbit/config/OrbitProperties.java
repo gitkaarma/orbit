@@ -16,7 +16,7 @@ public record OrbitProperties(Cors cors, Http http, Nasa nasa, Iss iss, Library 
     public record Nasa(String baseUrl, String apiKey) {
     }
 
-    public record Iss(String baseUrl) {
+    public record Iss(String baseUrl, String fallbackBaseUrl) {
     }
 
     public record Library(String baseUrl) {
