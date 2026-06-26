@@ -31,7 +31,7 @@ export function AppLayout() {
       <footer className="border-t border-border pb-20 md:pb-0">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-xs text-muted sm:flex-row sm:justify-between">
           <span>Orbit · a window on the cosmos</span>
-          <span>Data: NASA Open APIs, the NASA Image Library &amp; Celestrak. Not affiliated with NASA.</span>
+          <span>Data: NASA Open APIs, the NASA Image Library, and live ISS orbital data. Not affiliated with NASA.</span>
         </div>
       </footer>
       <BottomNav />

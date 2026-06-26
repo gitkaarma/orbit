@@ -7,7 +7,7 @@ just open it.
 
 ![Orbit](docs/og.png)
 
-🌐 **Live:** _deploying_ · Built with React 19, Spring Boot 3, and the NASA Open APIs.
+🌐 **Live:** **[orbit-torj.vercel.app](https://orbit-torj.vercel.app)** · Built with React 19, Spring Boot 3, and the NASA Open APIs.
 
 ---
 
@@ -41,11 +41,13 @@ needs. Every image the browser loads comes from a keyless host (`images-assets.n
 client-rendered.
 
 **The ISS moves smoothly without hammering anything.** Live-position APIs are rate-limited and jumpy.
-Instead the backend fetches the station's orbital elements (a TLE) from Celestrak once and caches them
-for six hours. The browser propagates the actual position with [satellite.js](https://github.com/shashwatak/satellite-js),
-derives the ground track and the day/night terminator locally, and the marker glides instead of
-teleporting. No polling, no rate limits. (satellite.js v4, deliberately: v5 ships a WASM build with
-top-level await that the bundler can't statically handle.)
+Instead the backend fetches the station's orbital elements (a TLE) once, caches them for six hours, and
+the browser propagates the actual position with [satellite.js](https://github.com/shashwatak/satellite-js),
+deriving the ground track and the day/night terminator locally. The marker glides instead of teleporting,
+with no polling and no rate limits. (Two lessons paid for here: satellite.js v4 not v5, whose WASM build
+breaks the bundler; and not Celestrak for the TLE, because it silently drops connections from datacenter
+IPs, so it works on a laptop but never from a cloud host. The provider uses a cloud-friendly source with
+a fallback.)
 
 **NASA's thumbnails are a trap, so the backend untangles them.** The image search returns one
 thumbnail URL per result, except the size is inconsistent. Some are 50 KB, some are the 26 MB original.
@@ -70,12 +72,12 @@ keyed by that id and persisted in Postgres. No login, but your collection follow
 - **Backend:** Spring Boot 3.5 / Java 21, a `RestClient`-based provider layer, Caffeine caching with
   per-endpoint TTLs, light Resilience4j retries, Spring Data JPA, springdoc OpenAPI.
 - **Data:** H2 locally, Postgres in production. NASA Open APIs (APOD, NeoWs, EPIC, Image Library) and
-  Celestrak for the TLE.
+  a cloud-friendly TLE service (with a fallback) for the ISS elements.
 - **Tests:** JUnit + WireMock + MockMvc on the backend, Vitest + Testing Library on the frontend,
   GitHub Actions for both.
 
 ```
-Browser (Vercel)  ──HTTPS──>  Spring Boot BFF (Render)  ──>  NASA Open APIs + Celestrak
+Browser (Vercel)  ──HTTPS──>  Spring Boot BFF (Render)  ──>  NASA Open APIs + TLE feed
    │  satellite.js                 │  owns NASA_API_KEY
    │  computes ISS live            │  caches responses (Caffeine)
    └──────────────────────────────┴──>  Postgres (Neon) for anonymous favorites
